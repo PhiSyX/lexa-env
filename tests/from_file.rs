@@ -15,17 +15,19 @@
 // ┃  file, You can obtain one at https://mozilla.org/MPL/2.0/.                ┃
 // ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
-mod declaration;
-mod error;
-mod from_file;
-mod from_str;
+#[test]
+fn test_get_env_from_file() {
+	#[derive(serde::Deserialize)]
+	struct MyEnv {
+		key: String,
+		maybe_key: Option<String>,
+	}
 
-pub use self::error::Error;
-pub use self::from_file::from_file;
-pub use self::from_str::from_str;
+	let env_filepath = "tests/.env";
+	let my_env: MyEnv = lexa_env::from_file(env_filepath).expect(
+		"La structure MyEnv avec les données adéquates du fichier .env",
+	);
 
-// ---- //
-// Type //
-// ---- //
-
-pub type Result<T> = std::result::Result<T, Error>;
+	assert_eq!(my_env.key, "VALUE");
+	assert!(my_env.maybe_key.is_none());
+}

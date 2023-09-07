@@ -15,17 +15,20 @@
 // ┃  file, You can obtain one at https://mozilla.org/MPL/2.0/.                ┃
 // ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
-mod declaration;
-mod error;
-mod from_file;
-mod from_str;
+use crate::Result;
 
-pub use self::error::Error;
-pub use self::from_file::from_file;
-pub use self::from_str::from_str;
+// -------- //
+// Fonction //
+// -------- //
 
-// ---- //
-// Type //
-// ---- //
-
-pub type Result<T> = std::result::Result<T, Error>;
+/// Dé-sérialise une chaîne vers un type.
+///
+/// Cette fonction va tenter d'interpréter `s` comme le contenu d'un document
+/// .env et de désérialiser `T` à partir de cette chaîne.
+pub fn from_file<T>(filepath: impl AsRef<std::path::Path>) -> Result<T>
+where
+	T: serde::de::DeserializeOwned,
+{
+	let content = std::fs::read_to_string(filepath)?;
+	crate::from_str::from_str(&content)
+}

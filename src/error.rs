@@ -15,6 +15,8 @@
 // ┃  file, You can obtain one at https://mozilla.org/MPL/2.0/.                ┃
 // ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
+use std::any;
+
 // ---- //
 // Type //
 // ---- //
@@ -26,9 +28,13 @@ type VariableName = &'static str;
 // ----------- //
 
 #[derive(Debug)]
-#[derive(PartialEq, Eq)]
 #[derive(thiserror::Error)]
+#[error(
+	"\t\n[{}]: erreur liée aux variables d'environnement. Raison: {0}",
+	any::type_name::<Self>()
+)]
 pub enum Error {
+	IO(#[from] std::io::Error),
 	/// L'analyse de la déclaration de la variable a échouée.
 	#[error("La déclaration n'a pas pu être analysée")]
 	ParseLineDeclaration,
