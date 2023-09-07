@@ -1,7 +1,10 @@
 [package]
 name = "lexa-env"
-version = "2.0.0"
+version = "0.1.0"
 edition = "2021"
+license = "MPL-2.0"
+repository = "https://github.com/PhiSyX/lexa-env"
+description = "Récupère tes variables d'environnement simplement."
 
 [dependencies]
 serde = { version = "^1.0", features = ["derive"] }
