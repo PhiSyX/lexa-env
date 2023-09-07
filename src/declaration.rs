@@ -30,7 +30,7 @@ type RValue<'a> = &'a str;
 
 #[derive(Debug)]
 #[derive(PartialEq, Eq)]
-pub struct Declaration<'a>(LValue<'a>, RValue<'a>);
+pub(crate) struct Declaration<'a>(LValue<'a>, RValue<'a>);
 
 // -------------- //
 // Implémentation //
@@ -38,7 +38,7 @@ pub struct Declaration<'a>(LValue<'a>, RValue<'a>);
 
 impl<'a> Declaration<'a> {
 	/// Analyse d'une déclaration de variable `VAR=[value]`
-	pub fn parse<'b: 'a>(input: &'b str) -> Result<Self> {
+	pub(crate) fn parse<'b: 'a>(input: &'b str) -> Result<Self> {
 		input
 			.split_once('=')
 			.filter(|(key, _)| key.to_ascii_uppercase().eq(key))
@@ -47,8 +47,38 @@ impl<'a> Declaration<'a> {
 	}
 
 	/// Définie une variable d'environnement.
-	pub fn set_env(&self) {
+	pub(crate) fn set_env(&self) {
 		let Self(key, value) = self;
 		std::env::set_var(key, value);
+	}
+}
+
+// ---- //
+// Test //
+// ---- //
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[test]
+	fn test_parse_empty_value() {
+		let decl = Declaration::parse("A=").expect("?");
+		assert_eq!(decl.0, "A");
+		assert_eq!(decl.1, "");
+	}
+
+	#[test]
+	fn test_parse_key_value() {
+		let decl = Declaration::parse("A=B").expect("?");
+		assert_eq!(decl.0, "A");
+		assert_eq!(decl.1, "B");
+	}
+
+	#[test]
+	fn test_parse_multiple_eq_sign() {
+		let decl = Declaration::parse("A=B=C=D").expect("?");
+		assert_eq!(decl.0, "A");
+		assert_eq!(decl.1, "B=C=D");
 	}
 }
