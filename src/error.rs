@@ -1,0 +1,44 @@
+// ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+// ┃                           __    _            ____  ______                 ┃
+// ┃                    ____  / /_  (_)______  __/ __ \/ ____/                 ┃
+// ┃                   / __ \/ __ \/ / ___/ / / / /_/ / /                      ┃
+// ┃                  / /_/ / / / / (__  ) /_/ / _, _/ /___                    ┃
+// ┃                 / .___/_/ /_/_/____/\__, /_/ |_|\____/                    ┃
+// ┃                /_/                 /____/                                 ┃
+// ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+// ┃ Copyright: (c) 2023, Mike 'PhiSyX' S. (https://github.com/PhiSyX)         ┃
+// ┃ SPDX-License-Identifier: MPL-2.0                                          ┃
+// ┃ ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ ┃
+// ┃                                                                           ┃
+// ┃  This Source Code Form is subject to the terms of the Mozilla Public      ┃
+// ┃  License, v. 2.0. If a copy of the MPL was not distributed with this      ┃
+// ┃  file, You can obtain one at https://mozilla.org/MPL/2.0/.                ┃
+// ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+// ---- //
+// Type //
+// ---- //
+
+type VariableName = &'static str;
+
+// ----------- //
+// Énumération //
+// ----------- //
+
+#[derive(Debug)]
+#[derive(PartialEq, Eq)]
+#[derive(thiserror::Error)]
+pub enum Error {
+	/// L'analyse de la déclaration de la variable a échouée.
+	#[error("La déclaration n'a pas pu être analysée")]
+	ParseLineDeclaration,
+	/// La variable d'environnement est mal formée.
+	#[error("Impossible d'analyser la variable d'environnement « {0} ».")]
+	BadFormat(VariableName),
+	/// La variable d'environnement est manquante.
+	#[error("La variable d'environnement « {0} » est manquante.")]
+	NotFound(VariableName),
+	/// Erreur interne.
+	#[error("Erreur interne: {0}")]
+	Internal(String),
+}
