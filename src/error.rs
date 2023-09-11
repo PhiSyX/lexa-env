@@ -30,7 +30,7 @@ type VariableName = &'static str;
 #[derive(Debug)]
 #[derive(thiserror::Error)]
 #[error(
-	"\t\n[{}]: erreur liée aux variables d'environnement. Raison: {0}",
+	"\n\t[{}]: erreur liée aux variables d'environnement. Raison: {0}",
 	any::type_name::<Self>()
 )]
 pub enum Error {
