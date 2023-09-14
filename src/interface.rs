@@ -8,19 +8,33 @@
 // ┃  file, You can obtain one at https://mozilla.org/MPL/2.0/.                ┃
 // ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
-mod declaration;
-mod error;
-mod from_file;
-mod from_str;
-mod interface;
+use std::fmt::Debug;
+use std::path;
 
-pub use self::error::Error;
-pub use self::from_file::from_file;
-pub use self::from_str::from_str;
-pub use self::interface::EnvInterface;
+// --------- //
+// Interface //
+// --------- //
 
-// ---- //
-// Type //
-// ---- //
+pub trait EnvInterface:
+	serde::de::DeserializeOwned + Debug + Clone + Send + Sync
+{
+	type Settings;
 
-pub type Result<T> = std::result::Result<T, Error>;
+	// NOTE(phisyx): ici typiquement pouvoir définir la fonction en "MaybeAsync"
+	//               aurait été vraiment sympa. Par exemple dans le cas où l'on
+	//               voudrait récupérer les variables d'environnement depuis un
+	//               serveur distant, et non pas depuis les fichiers systèmes.
+	//
+	// https://blog.rust-lang.org/inside-rust/2022/07/27/keyword-generics.html
+	//                              Result<Self, impl std::error::Error>
+	fn setup(_: &Self::Settings) -> Result<Self, super::Error>
+	where
+		Self: Sized;
+
+	/// Récupère les variables d'environnement à partir du contenu d'un fichier
+	/// et retourne une structure avec les données du contenu du fichier en
+	/// guise de valeurs pour chaque champ.
+	fn from_file(path: impl AsRef<path::Path>) -> Result<Self, super::Error> {
+		super::from_file(path)
+	}
+}
