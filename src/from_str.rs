@@ -18,19 +18,26 @@ use crate::{declaration, Error, Result};
 ///
 /// Cette fonction va tenter d'interpréter `s` comme le contenu d'un document
 /// .env et de désérialiser `T` à partir de cette chaîne.
-pub fn from_str<T>(s: &str) -> Result<T>
+pub fn from_str<T>(source_env: &str) -> Result<T>
 where
 	T: serde::de::DeserializeOwned,
 {
-	let decls = parse(s);
-	decls.for_each(|decl| decl.set_env());
+	let declarations = parse(source_env);
+
+	for decl in declarations {
+		let declaration::Declaration(decl_key, decl_value) = decl;
+		std::env::set_var(decl_key, decl_value);
+	}
+
 	// NOTE: La crate `serde_env` n'a pas exporté son type d'erreur 🤦‍♂️.
 	serde_env::from_env().map_err(|err| Error::Internal(err.to_string()))
 }
 
 #[inline]
-fn parse(input: &str) -> impl Iterator<Item = declaration::Declaration> + '_ {
-	input
-		.lines()
-		.filter_map(|line| declaration::Declaration::parse(line).ok())
+fn parse(
+	source_env: &str,
+) -> impl Iterator<Item = declaration::Declaration> + '_ {
+	source_env.lines().filter_map(|declaration_raw| {
+		declaration::Declaration::parse(declaration_raw).ok()
+	})
 }

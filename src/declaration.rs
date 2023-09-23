@@ -23,7 +23,7 @@ type RValue<'a> = &'a str;
 
 #[derive(Debug)]
 #[derive(PartialEq, Eq)]
-pub(crate) struct Declaration<'a>(LValue<'a>, RValue<'a>);
+pub(crate) struct Declaration<'a>(pub(crate) LValue<'a>, pub(crate) RValue<'a>);
 
 // -------------- //
 // Implémentation //
@@ -37,12 +37,6 @@ impl<'a> Declaration<'a> {
 			.filter(|(key, _)| key.to_ascii_uppercase().eq(key))
 			.map(|(key, value)| Self(key, value))
 			.ok_or(crate::Error::ParseLineDeclaration)
-	}
-
-	/// Définie une variable d'environnement.
-	pub(crate) fn set_env(&self) {
-		let Self(key, value) = self;
-		std::env::set_var(key, value);
 	}
 }
 

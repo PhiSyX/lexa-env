@@ -8,6 +8,8 @@
 // ┃  file, You can obtain one at https://mozilla.org/MPL/2.0/.                ┃
 // ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
+use std::{fs, path};
+
 use crate::Result;
 
 // -------- //
@@ -18,10 +20,10 @@ use crate::Result;
 ///
 /// Cette fonction va tenter d'interpréter `s` comme le contenu d'un document
 /// .env et de désérialiser `T` à partir de cette chaîne.
-pub fn from_file<T>(filepath: impl AsRef<std::path::Path>) -> Result<T>
+pub fn from_file<T>(filepath: impl AsRef<path::Path>) -> Result<T>
 where
 	T: serde::de::DeserializeOwned,
 {
-	let content = std::fs::read_to_string(filepath)?;
+	let content = fs::read_to_string(filepath)?;
 	crate::from_str::from_str(&content)
 }
