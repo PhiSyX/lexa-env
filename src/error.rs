@@ -26,7 +26,8 @@ type VariableName = &'static str;
 	"\n\t[{}]: erreur liée aux variables d'environnement. Raison: {0}",
 	any::type_name::<Self>()
 )]
-pub enum Error {
+pub enum Error
+{
 	IO(#[from] std::io::Error),
 	/// L'analyse de la déclaration de la variable a échouée.
 	#[error("La déclaration n'a pas pu être analysée")]

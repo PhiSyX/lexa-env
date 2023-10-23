@@ -34,10 +34,10 @@ where
 }
 
 #[inline]
-fn parse(
-	source_env: &str,
-) -> impl Iterator<Item = declaration::Declaration> + '_ {
-	source_env.lines().filter_map(|declaration_raw| {
+fn parse(source_env: &str) -> impl Iterator<Item = declaration::Declaration> + '_
+{
+	let parse_decl = |declaration_raw| {
 		declaration::Declaration::parse(declaration_raw).ok()
-	})
+	};
+	source_env.lines().filter_map(parse_decl)
 }

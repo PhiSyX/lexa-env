@@ -15,8 +15,12 @@ use std::path;
 // Interface //
 // --------- //
 
-pub trait EnvInterface:
-	serde::de::DeserializeOwned + Debug + Clone + Send + Sync
+pub trait EnvInterface
+	: Sized
+	+ Debug
+	+ Clone
+	+ Send Sync
+	+ serde::de::DeserializeOwned
 {
 	type Settings;
 
@@ -27,14 +31,13 @@ pub trait EnvInterface:
 	//
 	// https://blog.rust-lang.org/inside-rust/2022/07/27/keyword-generics.html
 	//                              Result<Self, impl std::error::Error>
-	fn setup(_: &Self::Settings) -> Result<Self, super::Error>
-	where
-		Self: Sized;
+	fn setup(_: &Self::Settings) -> Result<Self, super::Error>;
 
 	/// Récupère les variables d'environnement à partir du contenu d'un fichier
 	/// et retourne une structure avec les données du contenu du fichier en
 	/// guise de valeurs pour chaque champ.
-	fn from_file(path: impl AsRef<path::Path>) -> Result<Self, super::Error> {
+	fn from_file(path: impl AsRef<path::Path>) -> Result<Self, super::Error>
+	{
 		super::from_file(path)
 	}
 }

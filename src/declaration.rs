@@ -29,9 +29,11 @@ pub(crate) struct Declaration<'a>(pub(crate) LValue<'a>, pub(crate) RValue<'a>);
 // Implémentation //
 // -------------- //
 
-impl<'a> Declaration<'a> {
+impl<'a> Declaration<'a>
+{
 	/// Analyse d'une déclaration de variable `VAR=[value]`
-	pub(crate) fn parse<'b: 'a>(input: &'b str) -> Result<Self> {
+	pub(crate) fn parse<'b: 'a>(input: &'b str) -> Result<Self>
+	{
 		input
 			.split_once('=')
 			.filter(|(key, _)| key.to_ascii_uppercase().eq(key))
@@ -45,25 +47,29 @@ impl<'a> Declaration<'a> {
 // ---- //
 
 #[cfg(test)]
-mod tests {
+mod tests
+{
 	use super::*;
 
 	#[test]
-	fn test_parse_empty_value() {
+	fn test_parse_empty_value()
+	{
 		let decl = Declaration::parse("A=").expect("?");
 		assert_eq!(decl.0, "A");
 		assert_eq!(decl.1, "");
 	}
 
 	#[test]
-	fn test_parse_key_value() {
+	fn test_parse_key_value()
+	{
 		let decl = Declaration::parse("A=B").expect("?");
 		assert_eq!(decl.0, "A");
 		assert_eq!(decl.1, "B");
 	}
 
 	#[test]
-	fn test_parse_multiple_eq_sign() {
+	fn test_parse_multiple_eq_sign()
+	{
 		let decl = Declaration::parse("A=B=C=D").expect("?");
 		assert_eq!(decl.0, "A");
 		assert_eq!(decl.1, "B=C=D");
